@@ -12,7 +12,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "rounds")
-public class Round {
+public class Round extends UriEntity<Long> {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,9 +23,9 @@ public class Round {
 	@OneToMany(mappedBy = "round", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Match> matches = new ArrayList<>();
 
-	public Round() {
-	}
+	public Round() {}
 
+	@Override
 	public Long getId() {
 		return id;
 	}

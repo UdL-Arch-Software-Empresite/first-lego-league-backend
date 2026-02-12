@@ -12,7 +12,7 @@ import java.time.LocalTime;
 
 @Entity
 @Table(name = "matches")
-public class Match {
+public class Match extends UriEntity<Long> {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,6 +32,7 @@ public class Match {
 
 	public Match() {}
 
+	@Override
 	public Long getId() {
 		return id;
 	}

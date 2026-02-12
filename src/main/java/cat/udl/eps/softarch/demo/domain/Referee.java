@@ -1,29 +1,28 @@
 package cat.udl.eps.softarch.demo.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.PrimaryKeyJoinColumn;
 import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "referees")
-@PrimaryKeyJoinColumn(name = "volunteer_id")
 public class Referee extends Volunteer {
 
-	private Boolean isExpert;
+	private boolean isExpert;
 
-	@ManyToOne
-	@JoinColumn(name = "table_id")
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JsonBackReference
 	private CompetitionTable supervisesTable;
 
 	public Referee() {}
 
-	public Boolean getIsExpert() {
+	public boolean isExpert() {
 		return isExpert;
 	}
 
-	public void setIsExpert(Boolean expert) {
+	public void setExpert(boolean expert) {
 		isExpert = expert;
 	}
 
