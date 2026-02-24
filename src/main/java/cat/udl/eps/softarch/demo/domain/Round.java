@@ -24,7 +24,7 @@ public class Round extends UriEntity<Long> {
 	private int number;
 
 	@OneToMany(mappedBy = "round", cascade = CascadeType.ALL, orphanRemoval = true)
-	@JsonManagedReference("round-matches")
+	@JsonManagedReference
 	private List<Match> matches = new ArrayList<>();
 
 	public Round() {}

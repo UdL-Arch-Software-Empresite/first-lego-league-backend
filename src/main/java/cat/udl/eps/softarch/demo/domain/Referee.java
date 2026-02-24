@@ -19,7 +19,6 @@ public class Referee extends Volunteer {
 	@JsonBackReference("table-referees")
 	private CompetitionTable supervisesTable;
 
-	public Referee() {}
 
 	public boolean isExpert() {
 		return expert;

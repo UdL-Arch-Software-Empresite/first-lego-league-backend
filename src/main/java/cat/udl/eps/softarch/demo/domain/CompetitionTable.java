@@ -17,7 +17,7 @@ public class CompetitionTable extends UriEntity<String> {
 	@Id
 	private String id;
 
-	@OneToMany(mappedBy = "competitionTable", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "competitionTable", cascade = CascadeType.ALL)
 	@JsonManagedReference("table-matches")
 	private List<Match> matches = new ArrayList<>();
 
@@ -26,7 +26,6 @@ public class CompetitionTable extends UriEntity<String> {
 	@JsonManagedReference("table-referees")
 	private List<Referee> referees = new ArrayList<>();
 
-	public CompetitionTable() {}
 
 	@Override
 	public String getId() {
@@ -70,6 +69,9 @@ public class CompetitionTable extends UriEntity<String> {
 	}
 
 	public void addReferee(Referee referee) {
+		if (referees.size() >= 3) {
+			throw new IllegalStateException("A table can have a maximum of 3 referees");
+		}
 		referees.add(referee);
 		referee.setSupervisesTable(this);
 	}

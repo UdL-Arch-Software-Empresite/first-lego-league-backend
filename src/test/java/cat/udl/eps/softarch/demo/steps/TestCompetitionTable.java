@@ -46,17 +46,12 @@ public class TestCompetitionTable {
 
 	@Then("the validation should prevent adding a 4th referee")
 	public void the_validation_should_prevent_adding_a_4th_referee() {
-		// Intentamos añadir el cuarto y capturamos la excepción manualmente
-		// ya que en un test unitario simple JPA @Size no salta solo
 		exceptionCaptured = assertThrows(IllegalStateException.class, () -> {
-			if (table.getReferees().size() >= 3) {
-				throw new IllegalStateException("A table can have a maximum of 3 referees");
-			}
 			table.addReferee(new Referee());
 		});
 
+		assertNotNull(exceptionCaptured);
 		assertEquals("A table can have a maximum of 3 referees", exceptionCaptured.getMessage());
-		// Verificamos que la lista se mantiene en 3
 		assertEquals(3, table.getReferees().size());
 	}
 }
