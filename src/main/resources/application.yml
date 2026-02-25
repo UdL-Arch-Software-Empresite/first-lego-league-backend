@@ -15,7 +15,7 @@ spring:
     activate:
       on-profile: prod
 
-allowed-origins: "https://my-production-domain.com,https://*.vercel.app"
+allowed-origins: "https://www.firstlegoleague.win,https://*.vercel.app"
 
 logging:
   level:
