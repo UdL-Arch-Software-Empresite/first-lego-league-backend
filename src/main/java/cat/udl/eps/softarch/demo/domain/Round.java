@@ -11,9 +11,17 @@ import jakarta.persistence.Table;
 import java.util.ArrayList;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import java.util.List;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "rounds")
+@Getter
+@Setter
+@NoArgsConstructor
+@EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
 public class Round extends UriEntity<Long> {
 
 	@Id
@@ -25,30 +33,8 @@ public class Round extends UriEntity<Long> {
 
 	@OneToMany(mappedBy = "round", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonManagedReference("round-matches")
+	@Setter(lombok.AccessLevel.NONE)
 	private List<Match> matches = new ArrayList<>();
-
-	public Round() {}
-
-	@Override
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public int getNumber() {
-		return number;
-	}
-
-	public void setNumber(int number) {
-		this.number = number;
-	}
-
-	public List<Match> getMatches() {
-		return matches;
-	}
 
 	public void setMatches(List<Match> matches) {
 		this.matches.clear();
