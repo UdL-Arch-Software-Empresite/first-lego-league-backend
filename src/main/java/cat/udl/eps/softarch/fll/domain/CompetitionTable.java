@@ -38,7 +38,7 @@ public class CompetitionTable extends UriEntity<String> {
 	private List<Referee> referees = new ArrayList<>();
 
 	public void setMatches(List<Match> matches) {
-		this.matches.clear();
+		new ArrayList<>(this.matches).forEach(this::removeMatch);
 		if (matches != null) {
 			matches.forEach(this::addMatch);
 		}
@@ -51,7 +51,7 @@ public class CompetitionTable extends UriEntity<String> {
 
 		CompetitionTable previousTable = match.getCompetitionTable();
 		if (previousTable != null && previousTable != this) {
-			previousTable.getMatches().remove(match);
+			previousTable.removeMatch(match);
 		}
 
 		matches.add(match);
@@ -69,7 +69,7 @@ public class CompetitionTable extends UriEntity<String> {
 	}
 
 	public void setReferees(List<Referee> referees) {
-		this.referees.clear();
+		new ArrayList<>(this.referees).forEach(this::removeReferee);
 		if (referees != null) {
 			referees.forEach(this::addReferee);
 		}
@@ -86,7 +86,7 @@ public class CompetitionTable extends UriEntity<String> {
 
 		CompetitionTable previousTable = referee.getSupervisesTable();
 		if (previousTable != null && previousTable != this) {
-			previousTable.getReferees().remove(referee);
+			previousTable.removeReferee(referee);
 		}
 
 		referees.add(referee);

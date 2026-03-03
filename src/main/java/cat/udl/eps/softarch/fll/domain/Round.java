@@ -45,7 +45,11 @@ public class Round extends UriEntity<Long> {
 	}
 
 	public void addMatch(Match match) {
-		if (match == null || matches.contains(match)) {
+		if (match == null) {
+			return;
+		}
+
+		if (matches.stream().anyMatch(m -> m == match)) {
 			return;
 		}
 
@@ -59,7 +63,11 @@ public class Round extends UriEntity<Long> {
 	}
 
 	public void removeMatch(Match match) {
-		if (match != null && matches.remove(match)) {
+		if (match == null) {
+			return;
+		}
+
+		if (matches.removeIf(m -> m == match)) {
 			match.setRound(null);
 		}
 	}
