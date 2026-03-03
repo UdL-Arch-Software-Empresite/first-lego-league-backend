@@ -1,14 +1,15 @@
 package cat.udl.eps.softarch.fll.domain;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class AwardValidationTest {
 
 	private final Edition validEdition = Edition.create(2024, "Lleida Arena", "FLL Season");
-	private final Team validTeam = Team.create("Winners");
+	private final Team validTeam = Team.create("Winners", "Barcelona", 0, "category");
 
 	@Test
 	void validConstruction() {
@@ -21,13 +22,13 @@ class AwardValidationTest {
 		@Test
 		void nullNameThrows() {
 			assertThrows(DomainValidationException.class,
-					() -> Award.create(null, validEdition, validTeam));
+				() -> Award.create(null, validEdition, validTeam));
 		}
 
 		@Test
 		void blankNameThrows() {
 			assertThrows(DomainValidationException.class,
-					() -> Award.create("  ", validEdition, validTeam));
+				() -> Award.create("  ", validEdition, validTeam));
 		}
 	}
 
@@ -37,13 +38,13 @@ class AwardValidationTest {
 		@Test
 		void nullEditionThrows() {
 			assertThrows(DomainValidationException.class,
-					() -> Award.create("Best Robot", null, validTeam));
+				() -> Award.create("Best Robot", null, validTeam));
 		}
 
 		@Test
 		void nullWinnerThrows() {
 			assertThrows(DomainValidationException.class,
-					() -> Award.create("Best Robot", validEdition, null));
+				() -> Award.create("Best Robot", validEdition, null));
 		}
 	}
 }

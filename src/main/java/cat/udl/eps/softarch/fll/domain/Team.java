@@ -74,14 +74,6 @@ public class Team extends UriEntity<String> {
 	@ToString.Exclude
 	private Set<Floater> floaters = new HashSet<>();
 
-	public static Team create(String name) {
-		DomainValidation.requireNonBlank(name, "name");
-
-		Team team = new Team();
-		team.name = name;
-		return team;
-	}
-
 	public static Team create(String name, String city, Integer foundationYear, String category) {
 		DomainValidation.requireNonBlank(name, "name");
 		DomainValidation.requireNonBlank(city, "city");

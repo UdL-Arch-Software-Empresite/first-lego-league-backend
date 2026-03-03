@@ -1,14 +1,15 @@
 package cat.udl.eps.softarch.fll.domain;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class MatchResultValidationTest {
 
 	private final Match validMatch = new Match();
-	private final Team validTeam = Team.create("ValidTeam");
+	private final Team validTeam = Team.create("ValidTeam", "Barcelona", 0, "category");
 
 	@Test
 	void validConstruction() {
@@ -26,13 +27,13 @@ class MatchResultValidationTest {
 		@Test
 		void negativeScoreThrows() {
 			assertThrows(DomainValidationException.class,
-					() -> MatchResult.create(-1, validMatch, validTeam));
+				() -> MatchResult.create(-1, validMatch, validTeam));
 		}
 
 		@Test
 		void nullScoreThrows() {
 			assertThrows(DomainValidationException.class,
-					() -> MatchResult.create(null, validMatch, validTeam));
+				() -> MatchResult.create(null, validMatch, validTeam));
 		}
 	}
 
@@ -42,13 +43,13 @@ class MatchResultValidationTest {
 		@Test
 		void nullMatchThrows() {
 			assertThrows(DomainValidationException.class,
-					() -> MatchResult.create(50, null, validTeam));
+				() -> MatchResult.create(50, null, validTeam));
 		}
 
 		@Test
 		void nullTeamThrows() {
 			assertThrows(DomainValidationException.class,
-					() -> MatchResult.create(50, validMatch, null));
+				() -> MatchResult.create(50, validMatch, null));
 		}
 	}
 }

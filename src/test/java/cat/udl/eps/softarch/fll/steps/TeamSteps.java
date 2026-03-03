@@ -1,12 +1,5 @@
 package cat.udl.eps.softarch.fll.steps;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import java.util.List;
-import java.util.stream.IntStream;
-import org.springframework.transaction.annotation.Transactional;
 import cat.udl.eps.softarch.fll.domain.Team;
 import cat.udl.eps.softarch.fll.domain.TeamMember;
 import cat.udl.eps.softarch.fll.repository.TeamMemberRepository;
@@ -14,6 +7,15 @@ import cat.udl.eps.softarch.fll.repository.TeamRepository;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.stream.IntStream;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TeamSteps {
 
@@ -40,7 +42,7 @@ public class TeamSteps {
 
 	@Given("I create a team named {string} from {string}")
 	public void iCreateATeam(String name, String city) {
-		currentTeam = Team.create(name);
+		currentTeam = Team.create(name, "Barcelona", 0, "category");
 		currentTeam.setCity(city);
 		currentTeam.setFoundationYear(2000);
 		currentTeam.setCategory("Challenge");
@@ -75,10 +77,7 @@ public class TeamSteps {
 	@When("I try to create an invalid team named {string} from {string}")
 	public void tryCreateInvalid(String name, String city) {
 		try {
-			Team team = Team.create(name);
-			team.setCity(city);
-			team.setFoundationYear(2000);
-			team.setCategory("Challenge");
+			Team team = Team.create(name, city, 2000, "Challenge");
 			teamRepository.save(team);
 		} catch (Exception e) {
 			lastException = e;
@@ -92,10 +91,7 @@ public class TeamSteps {
 
 	@Given("I have a team named {string} with {int} members")
 	public void createTeamWithManyMembers(String name, int count) {
-		currentTeam = Team.create(name);
-		currentTeam.setCity("Igualada");
-		currentTeam.setFoundationYear(2000);
-		currentTeam.setCategory("Challenge");
+		currentTeam = Team.create(name, "Igualada", 2000, "Challenge");
 
 		IntStream.range(0, count).forEach(i -> {
 			TeamMember m = new TeamMember();
@@ -137,7 +133,7 @@ public class TeamSteps {
 			current = current.getCause();
 		}
 		assertTrue(found, "Error message '" + expectedMessage + "' not found in exception chain. Got: "
-				+ lastException.getMessage());
+			+ lastException.getMessage());
 	}
 
 	@Given("I have a team {string} with a member {string}")

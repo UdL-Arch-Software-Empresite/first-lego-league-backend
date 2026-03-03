@@ -28,7 +28,6 @@ public class ScientificProject extends UriEntity<Long> {
 	}
 
 	public static ScientificProject create(Integer score) {
-		DomainValidation.requireNonNull(score, "score");
 		DomainValidation.requireNonNegative(score, "score");
 
 		ScientificProject project = new ScientificProject();

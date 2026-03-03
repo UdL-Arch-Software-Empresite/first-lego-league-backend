@@ -1,10 +1,11 @@
 package cat.udl.eps.softarch.fll.domain;
 
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
 
 class TeamValidationTest {
 
@@ -15,7 +16,7 @@ class TeamValidationTest {
 
 	@Test
 	void singleNameConstruction() {
-		assertDoesNotThrow(() -> Team.create("Robotics"));
+		assertDoesNotThrow(() -> Team.create("Robotics", "Barcelona", 0, "category"));
 	}
 
 	@Nested
@@ -24,13 +25,13 @@ class TeamValidationTest {
 		@Test
 		void nullNameThrows() {
 			DomainValidationException ex = assertThrows(DomainValidationException.class,
-					() -> Team.create(null, "Lleida", 2020, "Challenge"));
+				() -> Team.create(null, "Lleida", 2020, "Challenge"));
 			assertEquals("name must not be blank", ex.getMessage());
 		}
 
 		@Test
 		void nullNameSingleArgThrows() {
-			assertThrows(DomainValidationException.class, () -> Team.create(null));
+			assertThrows(DomainValidationException.class, () -> Team.create(null, "Barcelona", 0, "category"));
 		}
 	}
 
@@ -40,25 +41,25 @@ class TeamValidationTest {
 		@Test
 		void blankNameThrows() {
 			assertThrows(DomainValidationException.class,
-					() -> Team.create("   ", "Lleida", 2020, "Challenge"));
+				() -> Team.create("   ", "Lleida", 2020, "Challenge"));
 		}
 
 		@Test
 		void emptyNameThrows() {
 			assertThrows(DomainValidationException.class,
-					() -> Team.create("", "Lleida", 2020, "Challenge"));
+				() -> Team.create("", "Lleida", 2020, "Challenge"));
 		}
 
 		@Test
 		void blankCityThrows() {
 			assertThrows(DomainValidationException.class,
-					() -> Team.create("Robotics", "  ", 2020, "Challenge"));
+				() -> Team.create("Robotics", "  ", 2020, "Challenge"));
 		}
 
 		@Test
 		void blankCategoryThrows() {
 			assertThrows(DomainValidationException.class,
-					() -> Team.create("Robotics", "Lleida", 2020, ""));
+				() -> Team.create("Robotics", "Lleida", 2020, ""));
 		}
 	}
 
@@ -68,7 +69,7 @@ class TeamValidationTest {
 		@Test
 		void nullFoundationYearThrows() {
 			assertThrows(DomainValidationException.class,
-					() -> Team.create("Robotics", "Lleida", null, "Challenge"));
+				() -> Team.create("Robotics", "Lleida", null, "Challenge"));
 		}
 	}
 }

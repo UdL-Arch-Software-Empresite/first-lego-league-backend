@@ -1,13 +1,14 @@
 package cat.udl.eps.softarch.fll.domain;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 class TeamMemberValidationTest {
 
-	private final Team validTeam = Team.create("TestTeam");
+	private final Team validTeam = Team.create("TestTeam", "Barcelona", 0, "category");
 
 	@Test
 	void validConstruction() {
@@ -20,19 +21,19 @@ class TeamMemberValidationTest {
 		@Test
 		void nullNameThrows() {
 			assertThrows(DomainValidationException.class,
-					() -> TeamMember.create(null, "Player", validTeam));
+				() -> TeamMember.create(null, "Player", validTeam));
 		}
 
 		@Test
 		void blankNameThrows() {
 			assertThrows(DomainValidationException.class,
-					() -> TeamMember.create("  ", "Player", validTeam));
+				() -> TeamMember.create("  ", "Player", validTeam));
 		}
 
 		@Test
 		void blankRoleThrows() {
 			assertThrows(DomainValidationException.class,
-					() -> TeamMember.create("Alice", "", validTeam));
+				() -> TeamMember.create("Alice", "", validTeam));
 		}
 	}
 
@@ -42,7 +43,7 @@ class TeamMemberValidationTest {
 		@Test
 		void nullTeamThrows() {
 			assertThrows(DomainValidationException.class,
-					() -> TeamMember.create("Alice", "Player", null));
+				() -> TeamMember.create("Alice", "Player", null));
 		}
 	}
 }
