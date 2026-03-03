@@ -8,10 +8,9 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import org.springframework.transaction.annotation.Transactional;
-
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.IntStream;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -47,11 +46,7 @@ public class TeamSteps {
 
 	@Given("I add a member named {string} with role {string}")
 	public void iAddAMember(String name, String role) {
-		TeamMember member = new TeamMember();
-		member.setName(name);
-		member.setRole(role);
-		member.setBirthDate(java.time.LocalDate.of(2010, 1, 1));
-		currentTeam.addMember(member);
+		TeamMember.create(name, role, LocalDate.of(2010, 1, 1), currentTeam);
 	}
 
 	@When("I save the team")
@@ -91,11 +86,7 @@ public class TeamSteps {
 		currentTeam = Team.create(name, "Igualada", 2000, "Challenge");
 
 		IntStream.range(0, count).forEach(i -> {
-			TeamMember m = new TeamMember();
-			m.setName("Member " + i);
-			m.setRole("Student");
-			m.setBirthDate(java.time.LocalDate.of(2010, 1, 1));
-			currentTeam.addMember(m);
+			TeamMember.create("Member " + i, "Student", LocalDate.of(2010, 1, 1), currentTeam);
 		});
 		teamRepository.save(currentTeam);
 	}
@@ -105,12 +96,7 @@ public class TeamSteps {
 	public void tryAddExtraMember() {
 		try {
 			Team loadedTeam = teamRepository.findById(currentTeam.getId()).orElseThrow();
-			TeamMember extra = new TeamMember();
-			extra.setName("Extra Member");
-			extra.setRole("Substitute");
-			extra.setBirthDate(java.time.LocalDate.of(2012, 5, 5));
-
-			loadedTeam.addMember(extra);
+			TeamMember.create("Extra Member", "Substitute", LocalDate.of(2012, 5, 5), loadedTeam);
 			teamRepository.save(loadedTeam);
 		} catch (Exception e) {
 			lastException = e;
