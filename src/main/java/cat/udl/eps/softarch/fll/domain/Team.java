@@ -76,7 +76,9 @@ public class Team extends UriEntity<String> {
 
 	public static Team create(String name, String city, Integer foundationYear, String category) {
 		DomainValidation.requireLengthBetween(name, 3, 50, "name");
+		DomainValidation.requireNonBlank(name, "name");
 		DomainValidation.requireLengthBetween(city, 1, 100, "city");
+		DomainValidation.requireNonBlank(city, "city");
 		DomainValidation.requireMin(foundationYear, 1998, "foundationYear");
 		DomainValidation.requireNonBlank(category, "category");
 
