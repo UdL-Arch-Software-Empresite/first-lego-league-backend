@@ -52,7 +52,7 @@ public class ManageVenueStepDefs {
 						.content(stepDefs.mapper.writeValueAsString(venue))
 						.characterEncoding(StandardCharsets.UTF_8)
 						.accept(MediaType.APPLICATION_JSON)
-						.with(AuthenticationStepDefs.authenticate("testuser", "password")))
+						.with(AuthenticationStepDefs.authenticate()))
 				.andDo(print());
 	}
 
@@ -63,7 +63,7 @@ public class ManageVenueStepDefs {
 				get("/venues/{id}", venue.getId())
 						.accept(MediaType.APPLICATION_JSON)
 						.characterEncoding(StandardCharsets.UTF_8)
-						.with(AuthenticationStepDefs.authenticate("testuser", "password")))
+						.with(AuthenticationStepDefs.authenticate()))
 				.andDo(print());
 	}
 
@@ -80,7 +80,7 @@ public class ManageVenueStepDefs {
 						.content(stepDefs.mapper.writeValueAsString(venue))
 						.characterEncoding(StandardCharsets.UTF_8)
 						.accept(MediaType.APPLICATION_JSON)
-						.with(AuthenticationStepDefs.authenticate("testuser", "password")))
+						.with(AuthenticationStepDefs.authenticate()))
 				.andDo(print());
 	}
 
@@ -89,7 +89,7 @@ public class ManageVenueStepDefs {
 		Venue venue = findVenueByName(name);
 		stepDefs.result = stepDefs.mockMvc.perform(
 				delete("/venues/{id}", venue.getId())
-						.with(AuthenticationStepDefs.authenticate("testuser", "password")))
+						.with(AuthenticationStepDefs.authenticate()))
 				.andDo(print());
 	}
 

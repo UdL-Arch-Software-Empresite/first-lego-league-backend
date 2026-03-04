@@ -40,7 +40,7 @@ public class ManageEditionStepDefs {
 						.content(stepDefs.mapper.writeValueAsString(edition))
 						.characterEncoding(StandardCharsets.UTF_8)
 						.accept(MediaType.APPLICATION_JSON)
-						.with(AuthenticationStepDefs.authenticate("testuser", "password")))
+						.with(AuthenticationStepDefs.authenticate()))
 				.andDo(print());
 
 		editionUri = stepDefs.result.andReturn().getResponse().getHeader("Location");
@@ -51,7 +51,7 @@ public class ManageEditionStepDefs {
 		stepDefs.result = stepDefs.mockMvc.perform(
 				get(editionUri)
 						.accept(MediaType.APPLICATION_JSON)
-						.with(AuthenticationStepDefs.authenticate("testuser", "password")))
+						.with(AuthenticationStepDefs.authenticate()))
 				.andDo(print())
 				.andExpect(jsonPath("$.year", is(year)))
 				.andExpect(jsonPath("$.venueName", is(venue)))
@@ -73,7 +73,7 @@ public class ManageEditionStepDefs {
 		stepDefs.result = stepDefs.mockMvc.perform(
 				get(editionUri)
 						.accept(MediaType.APPLICATION_JSON)
-						.with(AuthenticationStepDefs.authenticate("testuser", "password")))
+						.with(AuthenticationStepDefs.authenticate()))
 				.andDo(print());
 	}
 
@@ -85,7 +85,7 @@ public class ManageEditionStepDefs {
 						.content(stepDefs.mapper.writeValueAsString(Map.of("venueName", venue)))
 						.characterEncoding(StandardCharsets.UTF_8)
 						.accept(MediaType.APPLICATION_JSON)
-						.with(AuthenticationStepDefs.authenticate("testuser", "password")))
+						.with(AuthenticationStepDefs.authenticate()))
 				.andDo(print());
 	}
 
@@ -94,7 +94,7 @@ public class ManageEditionStepDefs {
 		stepDefs.result = stepDefs.mockMvc.perform(
 				get(editionUri)
 						.accept(MediaType.APPLICATION_JSON)
-						.with(AuthenticationStepDefs.authenticate("testuser", "password")))
+						.with(AuthenticationStepDefs.authenticate()))
 				.andDo(print())
 				.andExpect(jsonPath("$.venueName", is(venue)));
 	}
@@ -104,7 +104,7 @@ public class ManageEditionStepDefs {
 		stepDefs.result = stepDefs.mockMvc.perform(
 				delete(editionUri)
 						.accept(MediaType.APPLICATION_JSON)
-						.with(AuthenticationStepDefs.authenticate("testuser", "password")))
+						.with(AuthenticationStepDefs.authenticate()))
 				.andDo(print());
 	}
 
@@ -113,7 +113,7 @@ public class ManageEditionStepDefs {
 		stepDefs.mockMvc.perform(
 				get(editionUri)
 						.accept(MediaType.APPLICATION_JSON)
-						.with(AuthenticationStepDefs.authenticate("testuser", "password")))
+						.with(AuthenticationStepDefs.authenticate()))
 				.andDo(print())
 				.andExpect(status().isNotFound());
 	}

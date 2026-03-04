@@ -37,7 +37,7 @@ public class AwardAndMatchStepDefs {
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(editionJson.toString())
 				.characterEncoding(StandardCharsets.UTF_8)
-				.with(AuthenticationStepDefs.authenticate("testuser", "password"))).andReturn().getResponse();
+				.with(AuthenticationStepDefs.authenticate())).andReturn().getResponse();
 
 		if (edRes.getStatus() != 201 || edRes.getHeader("Location") == null) {
 			throw new RuntimeException("ERROR CREANT EDITION: " + edRes.getContentAsString());
@@ -54,7 +54,7 @@ public class AwardAndMatchStepDefs {
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(teamJson.toString())
 				.characterEncoding(StandardCharsets.UTF_8)
-				.with(AuthenticationStepDefs.authenticate("testuser", "password"))).andReturn().getResponse();
+				.with(AuthenticationStepDefs.authenticate())).andReturn().getResponse();
 
 		if (teamRes.getStatus() != 201 || teamRes.getHeader("Location") == null) {
 			throw new RuntimeException("ERROR CREANT TEAM: " + teamRes.getContentAsString());
@@ -70,7 +70,7 @@ public class AwardAndMatchStepDefs {
 	public void iRequestTheMatchResultsList() throws Throwable {
 		var request = get("/matchResults")
 				.accept(MediaType.APPLICATION_JSON)
-				.with(AuthenticationStepDefs.authenticate("testuser", "password"));
+				.with(AuthenticationStepDefs.authenticate());
 		stepDefs.result = stepDefs.mockMvc.perform(request);
 	}
 
@@ -78,7 +78,7 @@ public class AwardAndMatchStepDefs {
 	public void iRequestTheAwardsList() throws Throwable {
 		var request = get("/awards")
 				.accept(MediaType.APPLICATION_JSON)
-				.with(AuthenticationStepDefs.authenticate("testuser", "password"));
+				.with(AuthenticationStepDefs.authenticate());
 		stepDefs.result = stepDefs.mockMvc.perform(request);
 	}
 
@@ -94,7 +94,7 @@ public class AwardAndMatchStepDefs {
 				.content(payload.toString())
 				.characterEncoding(StandardCharsets.UTF_8)
 				.accept(MediaType.APPLICATION_JSON)
-				.with(AuthenticationStepDefs.authenticate("testuser", "password"));
+				.with(AuthenticationStepDefs.authenticate());
 
 		stepDefs.result = stepDefs.mockMvc.perform(request);
 	}
@@ -111,7 +111,7 @@ public class AwardAndMatchStepDefs {
 				.content(payload.toString())
 				.characterEncoding(StandardCharsets.UTF_8)
 				.accept(MediaType.APPLICATION_JSON)
-				.with(AuthenticationStepDefs.authenticate("testuser", "password"));
+				.with(AuthenticationStepDefs.authenticate());
 
 		stepDefs.result = stepDefs.mockMvc.perform(request);
 	}
@@ -127,7 +127,7 @@ public class AwardAndMatchStepDefs {
 				.content(payload.toString())
 				.characterEncoding(StandardCharsets.UTF_8)
 				.accept(MediaType.APPLICATION_JSON)
-				.with(AuthenticationStepDefs.authenticate("testuser", "password"));
+				.with(AuthenticationStepDefs.authenticate());
 
 		stepDefs.result = stepDefs.mockMvc.perform(request);
 	}

@@ -31,7 +31,7 @@ public class CoachStepDefs {
 						.content(stepDefs.mapper.writeValueAsString(coach))
 						.characterEncoding(StandardCharsets.UTF_8)
 						.accept(MediaType.APPLICATION_JSON)
-						.with(AuthenticationStepDefs.authenticate("testuser", "password")))
+						.with(AuthenticationStepDefs.authenticate()))
 				.andDo(print());
 	}
 
@@ -42,7 +42,7 @@ public class CoachStepDefs {
 		stepDefs.result = stepDefs.mockMvc.perform(
 				get(location)
 						.accept(MediaType.APPLICATION_JSON)
-						.with(AuthenticationStepDefs.authenticate("testuser", "password")))
+						.with(AuthenticationStepDefs.authenticate()))
 				.andDo(print())
 				.andExpect(jsonPath("$.name", is(name)))
 				.andExpect(jsonPath("$.emailAddress", is(email)));

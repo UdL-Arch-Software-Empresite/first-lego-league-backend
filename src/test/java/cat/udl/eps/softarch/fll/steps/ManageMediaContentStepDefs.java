@@ -39,7 +39,7 @@ public class ManageMediaContentStepDefs {
 						.content(stepDefs.mapper.writeValueAsString(mediaContent))
 						.characterEncoding(StandardCharsets.UTF_8)
 						.accept(MediaType.APPLICATION_JSON)
-						.with(AuthenticationStepDefs.authenticate("testuser", "password")))
+						.with(AuthenticationStepDefs.authenticate()))
 				.andDo(print());
 
 		mediaContentUri = stepDefs.result.andReturn().getResponse().getHeader("Location");
@@ -50,7 +50,7 @@ public class ManageMediaContentStepDefs {
 		stepDefs.result = stepDefs.mockMvc.perform(
 				get(mediaContentUri)
 						.accept(MediaType.APPLICATION_JSON)
-						.with(AuthenticationStepDefs.authenticate("testuser", "password")))
+						.with(AuthenticationStepDefs.authenticate()))
 				.andDo(print())
 				.andExpect(jsonPath("$.type", is(type)));
 	}
@@ -70,7 +70,7 @@ public class ManageMediaContentStepDefs {
 		stepDefs.result = stepDefs.mockMvc.perform(
 				get(mediaContentUri)
 						.accept(MediaType.APPLICATION_JSON)
-						.with(AuthenticationStepDefs.authenticate("testuser", "password")))
+						.with(AuthenticationStepDefs.authenticate()))
 				.andDo(print());
 	}
 
@@ -83,7 +83,7 @@ public class ManageMediaContentStepDefs {
 						.content(stepDefs.mapper.writeValueAsString(Map.of("type", type)))
 						.characterEncoding(StandardCharsets.UTF_8)
 						.accept(MediaType.APPLICATION_JSON)
-						.with(AuthenticationStepDefs.authenticate("testuser", "password")))
+						.with(AuthenticationStepDefs.authenticate()))
 				.andDo(print());
 	}
 
@@ -92,7 +92,7 @@ public class ManageMediaContentStepDefs {
 		stepDefs.result = stepDefs.mockMvc.perform(
 				get(mediaContentUri)
 						.accept(MediaType.APPLICATION_JSON)
-						.with(AuthenticationStepDefs.authenticate("testuser", "password")))
+						.with(AuthenticationStepDefs.authenticate()))
 				.andDo(print())
 				.andExpect(jsonPath("$.type", is(type)));
 	}
@@ -102,7 +102,7 @@ public class ManageMediaContentStepDefs {
 		stepDefs.result = stepDefs.mockMvc.perform(
 				delete("/mediaContents/" + url)
 						.accept(MediaType.APPLICATION_JSON)
-						.with(AuthenticationStepDefs.authenticate("testuser", "password")))
+						.with(AuthenticationStepDefs.authenticate()))
 				.andDo(print());
 	}
 
@@ -111,7 +111,7 @@ public class ManageMediaContentStepDefs {
 		stepDefs.mockMvc.perform(
 				get("/mediaContents/" + url)
 						.accept(MediaType.APPLICATION_JSON)
-						.with(AuthenticationStepDefs.authenticate("testuser", "password")))
+						.with(AuthenticationStepDefs.authenticate()))
 				.andDo(print())
 				.andExpect(status().isNotFound());
 	}

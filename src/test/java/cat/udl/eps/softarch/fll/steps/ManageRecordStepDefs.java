@@ -34,7 +34,7 @@ public class ManageRecordStepDefs {
 						.content(stepDefs.mapper.writeValueAsString(record))
 						.characterEncoding(StandardCharsets.UTF_8)
 						.accept(MediaType.APPLICATION_JSON)
-						.with(AuthenticationStepDefs.authenticate("testuser", "password")))
+						.with(AuthenticationStepDefs.authenticate()))
 				.andDo(print());
 	}
 
@@ -51,7 +51,7 @@ public class ManageRecordStepDefs {
 						.content(stepDefs.mapper.writeValueAsString(record))
 						.characterEncoding(StandardCharsets.UTF_8)
 						.accept(MediaType.APPLICATION_JSON)
-						.with(AuthenticationStepDefs.authenticate("testuser", "password")))
+						.with(AuthenticationStepDefs.authenticate()))
 				.andDo(print());
 	}
 
@@ -62,7 +62,7 @@ public class ManageRecordStepDefs {
 				get(newRecordUri + "/owner")
 						.accept(MediaType.APPLICATION_JSON)
 						.characterEncoding(StandardCharsets.UTF_8)
-						.with(AuthenticationStepDefs.authenticate("testuser", "password")))
+						.with(AuthenticationStepDefs.authenticate()))
 				.andDo(print())
 				.andExpect(jsonPath("$.username", is(username)));
 	}
@@ -74,7 +74,7 @@ public class ManageRecordStepDefs {
 				get("/records/search/findByOwner?user={userUri}", owner.getUri())
 						.accept(MediaType.APPLICATION_JSON)
 						.characterEncoding(StandardCharsets.UTF_8)
-						.with(AuthenticationStepDefs.authenticate("testuser", "password")))
+						.with(AuthenticationStepDefs.authenticate()))
 				.andDo(print())
 				.andExpect(jsonPath("$._embedded.records[*].name", hasItem(is(resourceName))));
 	}

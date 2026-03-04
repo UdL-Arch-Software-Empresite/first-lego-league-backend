@@ -50,7 +50,7 @@ public class RegisterStepDefs {
 		stepDefs.result = stepDefs.mockMvc.perform(
 				get("/identity", username)
 						.accept(MediaType.APPLICATION_JSON)
-						.with(AuthenticationStepDefs.authenticate("testuser", "password")))
+						.with(AuthenticationStepDefs.authenticate()))
 				.andDo(print())
 				.andExpect(status().isOk());
 	}
@@ -63,7 +63,7 @@ public class RegisterStepDefs {
 		stepDefs.result = stepDefs.mockMvc.perform(
 				get("/identity", username)
 						.accept(MediaType.APPLICATION_JSON)
-						.with(AuthenticationStepDefs.authenticate("testuser", "password")))
+						.with(AuthenticationStepDefs.authenticate()))
 				.andDo(print())
 				.andExpect(status().isUnauthorized());
 	}
@@ -81,7 +81,7 @@ public class RegisterStepDefs {
 								stepDefs.mapper.writeValueAsString(user)).put("password", password).toString())
 						.characterEncoding(StandardCharsets.UTF_8)
 						.accept(MediaType.APPLICATION_JSON)
-						.with(AuthenticationStepDefs.authenticate("testuser", "password")))
+						.with(AuthenticationStepDefs.authenticate()))
 				.andDo(print());
 	}
 
@@ -90,7 +90,7 @@ public class RegisterStepDefs {
 		stepDefs.result = stepDefs.mockMvc.perform(
 				get("/users/{username}", username)
 						.accept(MediaType.APPLICATION_JSON)
-						.with(AuthenticationStepDefs.authenticate("testuser", "password")))
+						.with(AuthenticationStepDefs.authenticate()))
 				.andDo(print())
 				.andExpect(jsonPath("$.email", is(email)))
 				.andExpect(jsonPath("$.password").doesNotExist());
@@ -101,7 +101,7 @@ public class RegisterStepDefs {
 		stepDefs.result = stepDefs.mockMvc.perform(
 				get("/users/{username}", username)
 						.accept(MediaType.APPLICATION_JSON)
-						.with(AuthenticationStepDefs.authenticate("testuser", "password")))
+						.with(AuthenticationStepDefs.authenticate()))
 				.andExpect(status().isNotFound());
 	}
 }

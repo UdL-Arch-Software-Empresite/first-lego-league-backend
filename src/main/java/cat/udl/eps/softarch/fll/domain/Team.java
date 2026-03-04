@@ -131,8 +131,10 @@ public class Team extends UriEntity<String> {
 	}
 
 	public void addCoach(Coach coach) {
-
-		if (trainedBy.contains(coach)) {
+		if (coach == null) {
+			throw new IllegalStateException("COACH_NOT_FOUND");
+		}
+			if (trainedBy.contains(coach)) {
 			throw new IllegalStateException("COACH_ALREADY_ASSIGNED");
 		}
 
