@@ -9,10 +9,10 @@ import cat.udl.eps.softarch.fll.service.CoachService;
 import io.cucumber.java.en.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import io.cucumber.java.Before;
 
 
 
@@ -46,6 +46,7 @@ public class AssignCoachSteps {
 	@Given("a coach with id {int} exists")
 	public void aCoachExists(Integer id) {
 		Coach coach = new Coach();
+		coach.setId(id);
 		coach.setName("Coach" + id);
 		coach.setEmailAddress("coach" + id + "@mail.com");
 		coach.setPhoneNumber("123456789");
@@ -78,4 +79,10 @@ public class AssignCoachSteps {
 		assertNotNull(exception);
 		assertTrue(exception.getMessage().contains(error));
 	}
+	@Before
+	public void setUp() {
+		exception = null;
+		response = null;
+	}
 }
+
