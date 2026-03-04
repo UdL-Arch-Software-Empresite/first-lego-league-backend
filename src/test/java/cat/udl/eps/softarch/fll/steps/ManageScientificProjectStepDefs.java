@@ -7,6 +7,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
+import java.util.UUID;
 import org.json.JSONObject;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -90,7 +91,7 @@ public class ManageScientificProjectStepDefs {
 	@When("I create a new scientific project with score {int} and comments {string} and invalid team")
 	public void iCreateScientificProjectWithInvalidTeam(Integer score, String comments) throws Exception {
 		latestScientificProjectUri = null;
-		String invalidTeamUri = "http://localhost/teams/non-existing-\" + ";
+		String invalidTeamUri = "http://localhost/teams/non-existing-" + UUID.randomUUID();
 		stepDefs.result = performCreateProject(score, comments, invalidTeamUri, true);
 		if (stepDefs.result.andReturn().getResponse().getStatus() == 201) {
 			latestScientificProjectUri = stepDefs.result.andReturn().getResponse().getHeader("Location");
