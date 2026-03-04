@@ -263,6 +263,21 @@ class MatchAssignmentServiceTest {
 	}
 
 	@Test
+	void assignBatchFailsWhenMatchIdAppearsTwiceInPayload() {
+		when(roundRepository.findById(3L)).thenReturn(Optional.of(buildRound(3L)));
+
+		MatchAssignmentException ex = assertThrows(
+				MatchAssignmentException.class,
+				() -> service.assignBatch("3", List.of(
+						new BatchMatchAssignmentItemRequest("10", "20"),
+						new BatchMatchAssignmentItemRequest("10", "21"))));
+
+		assertEquals(MatchAssignmentErrorCode.DUPLICATE_MATCH_IN_BATCH, ex.getErrorCode());
+		assertEquals(1, ex.getIndex());
+		verify(matchRepository, never()).saveAll(any());
+	}
+
+	@Test
 	void assignBatchFailsWhenRoundDoesNotExist() {
 		when(roundRepository.findById(3L)).thenReturn(Optional.empty());
 

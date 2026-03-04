@@ -1,8 +1,11 @@
 package cat.udl.eps.softarch.fll.service;
 
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,20 +40,17 @@ public class MatchAssignmentService {
 
 	@Transactional
 	public Match assignReferee(String matchId, String refereeId) {
-		Long parsedMatchId = parseIdOrThrow(matchId, null, matchId, refereeId);
-		Long parsedRefereeId = parseIdOrThrow(refereeId, null, matchId, refereeId);
+		Long parsedMatchId = parseIdOrThrow(matchId);
+		Long parsedRefereeId = parseIdOrThrow(refereeId);
 
 		Match match = matchRepository.findByIdForUpdate(parsedMatchId)
-				.orElseThrow(() -> assignmentException(
+				.orElseThrow(() -> new MatchAssignmentException(
 						MatchAssignmentErrorCode.MATCH_NOT_FOUND,
-						"Match not found: " + matchId,
-						null,
-						matchId,
-						refereeId));
+						"Match not found: " + matchId));
 
-		validateMatchForAssignment(match, null, matchId, refereeId);
-		Referee referee = resolveReferee(parsedRefereeId, refereeId, null, matchId, refereeId);
-		validateAvailability(match, referee, null, matchId, refereeId);
+		validateMatchForAssignment(match, null);
+		Referee referee = resolveReferee(parsedRefereeId, refereeId, null);
+		validateAvailability(match, referee, null);
 
 		match.setReferee(referee);
 		return matchRepository.save(match);
@@ -67,7 +67,7 @@ public class MatchAssignmentService {
 	 */
 	@Transactional
 	public BatchMatchAssignmentResponse assignBatch(String roundId, List<BatchMatchAssignmentItemRequest> assignments) {
-		Long parsedRoundId = parseIdOrThrow(roundId, null, null, null);
+		Long parsedRoundId = parseIdOrThrow(roundId);
 		Round round = roundRepository.findById(parsedRoundId)
 				.orElseThrow(() -> new MatchAssignmentException(
 						MatchAssignmentErrorCode.ROUND_NOT_FOUND,
@@ -75,53 +75,65 @@ public class MatchAssignmentService {
 
 		List<ResolvedAssignmentCandidate> candidates = new ArrayList<>();
 		Set<Long> seenMatchIds = new HashSet<>();
+		List<ParsedAssignment> parsedAssignments = new ArrayList<>();
 
 		for (int i = 0; i < assignments.size(); i++) {
-			int assignmentIndex = i;
 			BatchMatchAssignmentItemRequest item = assignments.get(i);
-			Long parsedMatchId = parseIdOrThrow(item.matchId(), assignmentIndex, item.matchId(), item.refereeId());
-			Long parsedRefereeId = parseIdOrThrow(item.refereeId(), assignmentIndex, item.matchId(), item.refereeId());
+			if (item == null) {
+				AssignmentContext nullItemContext = new AssignmentContext(i, "null", "null");
+				throw assignmentException(
+						MatchAssignmentErrorCode.INVALID_ID_FORMAT,
+						"Assignment item cannot be null",
+						nullItemContext);
+			}
+			AssignmentContext context = new AssignmentContext(i, item.matchId(), item.refereeId());
+			Long parsedMatchId = parseIdOrThrow(item.matchId(), context);
+			Long parsedRefereeId = parseIdOrThrow(item.refereeId(), context);
 
 			if (!seenMatchIds.add(parsedMatchId)) {
-				throw new MatchAssignmentException(
-							MatchAssignmentErrorCode.MATCH_ALREADY_HAS_REFEREE,
-							"Match appears multiple times in the same batch",
-							assignmentIndex,
-							item.matchId(),
-							item.refereeId());
+				throw assignmentException(
+						MatchAssignmentErrorCode.DUPLICATE_MATCH_IN_BATCH,
+						"Match appears multiple times in the same batch",
+						context);
 			}
+			parsedAssignments.add(new ParsedAssignment(context, parsedMatchId, parsedRefereeId));
+		}
 
-			Match match = matchRepository.findByIdForUpdate(parsedMatchId)
-					.orElseThrow(() -> new MatchAssignmentException(
-								MatchAssignmentErrorCode.MATCH_NOT_FOUND,
-								"Match not found: " + item.matchId(),
-								assignmentIndex,
-								item.matchId(),
-								item.refereeId()));
+		parsedAssignments.sort(Comparator
+				.comparingLong(ParsedAssignment::parsedMatchId)
+				.thenComparingLong(ParsedAssignment::parsedRefereeId)
+				.thenComparingInt(parsedAssignment -> parsedAssignment.context().index()));
+
+		for (ParsedAssignment parsedAssignment : parsedAssignments) {
+			AssignmentContext context = parsedAssignment.context();
+			Match match = matchRepository.findByIdForUpdate(parsedAssignment.parsedMatchId())
+					.orElseThrow(() -> assignmentException(
+							MatchAssignmentErrorCode.MATCH_NOT_FOUND,
+							"Match not found: " + context.matchId(),
+							context));
 
 			if (match.getRound() == null || !round.getId().equals(match.getRound().getId())) {
-				throw new MatchAssignmentException(
-							MatchAssignmentErrorCode.INVALID_MATCH_STATE,
-							"Match does not belong to the provided round",
-							assignmentIndex,
-							item.matchId(),
-							item.refereeId());
+				throw assignmentException(
+						MatchAssignmentErrorCode.INVALID_MATCH_STATE,
+						"Match does not belong to the provided round",
+						context);
 			}
 
-			validateMatchForAssignment(match, assignmentIndex, item.matchId(), item.refereeId());
-			Referee referee = resolveReferee(parsedRefereeId, item.refereeId(), assignmentIndex, item.matchId(), item.refereeId());
-			validateAvailability(match, referee, assignmentIndex, item.matchId(), item.refereeId());
+			validateMatchForAssignment(match, context);
+			Referee referee = resolveReferee(parsedAssignment.parsedRefereeId(), context.refereeId(), context);
+			validateAvailability(match, referee, context);
 
-			candidates.add(new ResolvedAssignmentCandidate(assignmentIndex, item.matchId(), item.refereeId(), match, referee));
+			candidates.add(new ResolvedAssignmentCandidate(context, match, referee));
 		}
 
 		validateBatchInternalConflicts(candidates);
 		applyBatchAssignments(candidates);
 
 		List<BatchMatchAssignmentItemResponse> responseItems = candidates.stream()
+				.sorted(Comparator.comparingInt(candidate -> candidate.context().index()))
 				.map(candidate -> new BatchMatchAssignmentItemResponse(
-						candidate.matchId(),
-						candidate.refereeId(),
+						candidate.context().matchId(),
+						candidate.context().refereeId(),
 						"ASSIGNED"))
 				.toList();
 
@@ -136,21 +148,38 @@ public class MatchAssignmentService {
 	 * Exceptions: throws {@link MatchAssignmentException} with failing item details.
 	 */
 	void validateBatchInternalConflicts(List<ResolvedAssignmentCandidate> candidates) {
-		for (int i = 0; i < candidates.size(); i++) {
-			ResolvedAssignmentCandidate left = candidates.get(i);
-			for (int j = i + 1; j < candidates.size(); j++) {
-				ResolvedAssignmentCandidate right = candidates.get(j);
-				boolean sameReferee = left.referee().getId().equals(right.referee().getId());
-				if (sameReferee && overlaps(left.match(), right.match())) {
-					throw new MatchAssignmentException(
-							MatchAssignmentErrorCode.AVAILABILITY_CONFLICT,
-							"Referee is assigned to overlapping matches in the same batch",
-							right.index(),
-							right.matchId(),
-							right.refereeId());
-				}
+		Map<Long, List<ResolvedAssignmentCandidate>> candidatesByReferee = new HashMap<>();
+		for (ResolvedAssignmentCandidate candidate : candidates) {
+			candidatesByReferee.computeIfAbsent(candidate.referee().getId(), ignored -> new ArrayList<>()).add(candidate);
+		}
+
+		for (List<ResolvedAssignmentCandidate> refereeCandidates : candidatesByReferee.values()) {
+			AssignmentContext conflictContext = detectIntraBatchConflict(refereeCandidates);
+			if (conflictContext != null) {
+				throw assignmentException(
+						MatchAssignmentErrorCode.AVAILABILITY_CONFLICT,
+						"Referee is assigned to overlapping matches in the same batch",
+						conflictContext);
 			}
 		}
+	}
+
+	private AssignmentContext detectIntraBatchConflict(List<ResolvedAssignmentCandidate> refereeCandidates) {
+		refereeCandidates.sort(Comparator
+				.comparing((ResolvedAssignmentCandidate candidate) -> candidate.match().getStartTime())
+				.thenComparing(candidate -> candidate.match().getEndTime())
+				.thenComparingInt(candidate -> candidate.context().index()));
+
+		for (int i = 1; i < refereeCandidates.size(); i++) {
+			ResolvedAssignmentCandidate previous = refereeCandidates.get(i - 1);
+			ResolvedAssignmentCandidate current = refereeCandidates.get(i);
+			if (overlaps(previous.match(), current.match())) {
+				return current.context().index() >= previous.context().index()
+						? current.context()
+						: previous.context();
+			}
+		}
+		return null;
 	}
 
 	/**
@@ -161,7 +190,9 @@ public class MatchAssignmentService {
 	 * Exceptions: propagated persistence exceptions trigger transaction rollback.
 	 */
 	void applyBatchAssignments(List<ResolvedAssignmentCandidate> candidates) {
-		List<Match> matchesToUpdate = candidates.stream().map(ResolvedAssignmentCandidate::match).toList();
+		List<Match> matchesToUpdate = candidates.stream()
+				.map(ResolvedAssignmentCandidate::match)
+				.toList();
 		for (ResolvedAssignmentCandidate candidate : candidates) {
 			candidate.match().setReferee(candidate.referee());
 		}
@@ -173,39 +204,28 @@ public class MatchAssignmentService {
 				&& first.getEndTime().isAfter(second.getStartTime());
 	}
 
-	private Referee resolveReferee(
-			Long parsedRefereeId,
-			String refereeId,
-			Integer index,
-			String matchIdForDetails,
-			String refereeIdForDetails) {
+	private Referee resolveReferee(Long parsedRefereeId, String refereeId, AssignmentContext context) {
 		Volunteer volunteer = volunteerRepository.findByIdForUpdate(parsedRefereeId)
 				.orElseThrow(() -> assignmentException(
 						MatchAssignmentErrorCode.REFEREE_NOT_FOUND,
 						"Referee not found: " + refereeId,
-						index,
-						matchIdForDetails,
-						refereeIdForDetails));
+						context));
 
 		if (!(volunteer instanceof Referee referee)) {
 			throw assignmentException(
 					MatchAssignmentErrorCode.INVALID_ROLE,
 					"Volunteer does not have the Referee role",
-					index,
-					matchIdForDetails,
-					refereeIdForDetails);
+					context);
 		}
 		return referee;
 	}
 
-	private void validateMatchForAssignment(Match match, Integer index, String matchId, String refereeId) {
+	private void validateMatchForAssignment(Match match, AssignmentContext context) {
 		if (match.getReferee() != null) {
 			throw assignmentException(
 					MatchAssignmentErrorCode.MATCH_ALREADY_HAS_REFEREE,
 					"Match already has a referee assigned",
-					index,
-					matchId,
-					refereeId);
+					context);
 		}
 
 		if (match.getState() == null || match.getState() == MatchState.FINISHED
@@ -213,59 +233,54 @@ public class MatchAssignmentService {
 			throw assignmentException(
 					MatchAssignmentErrorCode.INVALID_MATCH_STATE,
 					"Match is not in a valid state for referee assignment",
-					index,
-					matchId,
-					refereeId);
+					context);
 		}
 	}
 
-	private void validateAvailability(
-			Match match,
-			Referee referee,
-			Integer index,
-			String matchId,
-			String refereeId) {
+	private void validateAvailability(Match match, Referee referee, AssignmentContext context) {
 		List<Match> conflicts = matchRepository.findOverlappingAssignments(
 				referee, match.getStartTime(), match.getEndTime(), match.getId());
 		if (!conflicts.isEmpty()) {
 			throw assignmentException(
 					MatchAssignmentErrorCode.AVAILABILITY_CONFLICT,
 					"Referee is already assigned to another overlapping match",
-					index,
-					matchId,
-					refereeId);
+					context);
 		}
 	}
 
-	private Long parseIdOrThrow(String value, Integer index, String matchId, String refereeId) {
+	private Long parseIdOrThrow(String value) {
+		return parseIdOrThrow(value, null);
+	}
+
+	private Long parseIdOrThrow(String value, AssignmentContext context) {
 		try {
 			return Long.parseLong(value);
-		} catch (NumberFormatException ex) {
+		} catch (NumberFormatException | NullPointerException ex) {
 			throw assignmentException(
 					MatchAssignmentErrorCode.INVALID_ID_FORMAT,
 					"Invalid ID format: " + value,
-					index,
-					matchId,
-					refereeId);
+					context);
 		}
 	}
 
-	private MatchAssignmentException assignmentException(
-			MatchAssignmentErrorCode errorCode,
-			String message,
-			Integer index,
-			String matchId,
-			String refereeId) {
-		if (index == null) {
+	private MatchAssignmentException assignmentException(MatchAssignmentErrorCode errorCode, String message, AssignmentContext context) {
+		if (context == null) {
 			return new MatchAssignmentException(errorCode, message);
 		}
-		return new MatchAssignmentException(errorCode, message, index, matchId, refereeId);
+		return new MatchAssignmentException(
+				errorCode,
+				message,
+				context.index(),
+				context.matchId(),
+				context.refereeId());
 	}
 
+	record AssignmentContext(Integer index, String matchId, String refereeId) {}
+
+	record ParsedAssignment(AssignmentContext context, Long parsedMatchId, Long parsedRefereeId) {}
+
 	record ResolvedAssignmentCandidate(
-			Integer index,
-			String matchId,
-			String refereeId,
+			AssignmentContext context,
 			Match match,
 			Referee referee) {}
 }

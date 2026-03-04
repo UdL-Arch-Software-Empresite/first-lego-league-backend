@@ -89,3 +89,9 @@ Feature: Match referee assignment
 		And assignment error code is "BATCH_ASSIGNMENT_FAILED"
 		And batch assignment error cause is "INVALID_ROLE"
 		And none of the batch matches should have a referee assigned
+
+	Scenario: Batch assignment fails when round does not exist
+		Given a referee volunteer exists
+		When I assign referees in batch for round id "99999"
+		Then The response code is 404
+		And assignment error code is "ROUND_NOT_FOUND"

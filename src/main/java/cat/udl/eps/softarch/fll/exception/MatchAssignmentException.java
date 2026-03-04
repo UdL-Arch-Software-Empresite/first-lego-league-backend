@@ -18,6 +18,9 @@ public class MatchAssignmentException extends RuntimeException {
 			String refereeId) {
 		super(message);
 		this.errorCode = errorCode;
+		if ((index == null) != (matchId == null) || (index == null) != (refereeId == null)) {
+			throw new IllegalArgumentException("index, matchId and refereeId must be provided together");
+		}
 		this.index = index;
 		this.matchId = matchId;
 		this.refereeId = refereeId;
@@ -40,6 +43,6 @@ public class MatchAssignmentException extends RuntimeException {
 	}
 
 	public boolean hasBatchDetails() {
-		return index != null;
+		return index != null && matchId != null && refereeId != null;
 	}
 }

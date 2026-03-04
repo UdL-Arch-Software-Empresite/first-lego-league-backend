@@ -192,6 +192,11 @@ public class MatchAssignmentStepDefs {
 				new BatchAssignment(batchMatches.get(1).getId(), currentFloater.getId())));
 	}
 
+	@When("I assign referees in batch for round id {string}")
+	public void assignRefereesInBatchForRoundId(String roundId) throws Exception {
+		assignBatchForRound(roundId, List.of(new BatchAssignment(10L, currentReferee.getId())));
+	}
+
 	@Then("assignment response status is {string}")
 	public void verifyAssignmentStatus(String expectedStatus) throws Exception {
 		stepDefs.result.andExpect(jsonPath("$.status").value(expectedStatus));
@@ -266,8 +271,12 @@ public class MatchAssignmentStepDefs {
 	}
 
 	private void assignBatch(List<BatchAssignment> assignments) throws Exception {
+		assignBatchForRound(String.valueOf(currentRound.getId()), assignments);
+	}
+
+	private void assignBatchForRound(String roundId, List<BatchAssignment> assignments) throws Exception {
 		JSONObject request = new JSONObject();
-		request.put("roundId", String.valueOf(currentRound.getId()));
+		request.put("roundId", roundId);
 
 		JSONArray payloadAssignments = new JSONArray();
 		for (BatchAssignment assignment : assignments) {
