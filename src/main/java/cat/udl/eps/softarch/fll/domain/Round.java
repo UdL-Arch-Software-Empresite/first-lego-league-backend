@@ -49,7 +49,6 @@ public class Round extends UriEntity<Long> {
 			return;
 		}
 
-		// USA IDENTIDAD (==) para que los tests con IDs nulos no fallen
 		if (this.matches.stream().anyMatch(m -> m == match)) {
 			return;
 		}
