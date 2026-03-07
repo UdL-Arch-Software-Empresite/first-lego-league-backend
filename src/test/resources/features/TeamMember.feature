@@ -18,7 +18,7 @@ Feature: TeamMember REST CRUD
     Scenario Outline: Failing to create a team member with a missing mandatory field
         Given a team with name "ValidationTeam" exists for team member management
         When I try to create a team member missing "<field>" for team "ValidationTeam"
-        Then The response code is 422
+        Then The response code is 400
         And The error message is "<message>"
 
         Examples:
@@ -54,4 +54,3 @@ Feature: TeamMember REST CRUD
         Then The response code is 204
         When I retrieve the deleted team member by id
         Then The response code is 404
-

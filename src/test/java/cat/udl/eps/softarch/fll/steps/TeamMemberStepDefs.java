@@ -147,7 +147,7 @@ public class TeamMemberStepDefs {
 						.with(AuthenticationStepDefs.authenticate()))
 				.andDo(print())
 				.andExpect(status().isOk())
-				.andExpect(jsonPath("$.name", is(expectedTeamName)));
+				.andExpect(jsonPath("$.id", is(expectedTeamName)));
 	}
 
 	@Then("The response contains team member name {string} and role {string}")
@@ -162,8 +162,9 @@ public class TeamMemberStepDefs {
 		stepDefs.result.andExpect(jsonPath("$._embedded.teamMembers[*].name", hasItem(is(expectedName))));
 	}
 
-	private JSONObject buildTeamMemberPayload(String name, String birthDate, String role, String teamName) {
+	private JSONObject buildTeamMemberPayload(String name, String birthDate, String role, String teamName) throws Exception {
 		JSONObject payload = new JSONObject();
+		payload.put("uri", "/teamMembers/" + name.replace(" ", "-").toLowerCase());
 		payload.put("name", name);
 		payload.put("birthDate", birthDate);
 		payload.put("role", role);
