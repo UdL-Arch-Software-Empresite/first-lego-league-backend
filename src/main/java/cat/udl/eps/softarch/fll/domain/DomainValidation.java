@@ -11,12 +11,6 @@ public final class DomainValidation {
 	private DomainValidation() {
 	}
 
-	public static void requireNonNullId(Object id, String fieldName) {
-		if (id == null) {
-			throw new DomainValidationException(fieldName + " must not be null");
-		}
-	}
-
 	public static void requireNonBlank(String value, String fieldName) {
 		if (value == null || value.isBlank()) {
 			throw new DomainValidationException(fieldName + " must not be blank");
