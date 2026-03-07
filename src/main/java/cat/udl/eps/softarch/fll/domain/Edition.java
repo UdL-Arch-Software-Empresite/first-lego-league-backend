@@ -29,7 +29,7 @@ public class Edition extends UriEntity<Long> {
 	@NotBlank
 	private String description;
 
-	public Edition() {
+	protected Edition() {
 	}
 
 	public static Edition create(Integer year, String venueName, String description) {

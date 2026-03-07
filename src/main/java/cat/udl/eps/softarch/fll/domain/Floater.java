@@ -5,8 +5,10 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
+import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import java.util.HashSet;
@@ -16,6 +18,7 @@ import java.util.Set;
 @Table(name = "floaters")
 @Getter
 @Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
 public class Floater extends Volunteer {
 

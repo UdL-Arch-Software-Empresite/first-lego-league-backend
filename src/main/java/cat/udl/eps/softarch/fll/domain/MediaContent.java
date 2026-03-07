@@ -27,7 +27,7 @@ public class MediaContent extends UriEntity<String> {
 	@JsonIdentityReference(alwaysAsId = true)
 	private Edition edition;
 
-	public MediaContent() {
+	protected MediaContent() {
 	}
 
 	public static MediaContent create(String url, String type) {

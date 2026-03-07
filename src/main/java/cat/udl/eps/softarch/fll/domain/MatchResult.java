@@ -35,7 +35,7 @@ public class MatchResult extends UriEntity<Long> {
 	@JsonIdentityReference(alwaysAsId = true)
 	private Team team;
 
-	public MatchResult() {
+	protected MatchResult() {
 	}
 
 	public static MatchResult create(Integer score, Match match, Team team) {
