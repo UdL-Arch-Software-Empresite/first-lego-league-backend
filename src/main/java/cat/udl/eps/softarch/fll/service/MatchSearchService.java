@@ -1,13 +1,11 @@
 package cat.udl.eps.softarch.fll.service;
 
 import java.time.LocalTime;
-
 import cat.udl.eps.softarch.fll.dto.MatchSearchItemResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-
 import cat.udl.eps.softarch.fll.domain.Match;
 import cat.udl.eps.softarch.fll.repository.MatchRepository;
 import cat.udl.eps.softarch.fll.repository.MatchSpecifications;
@@ -50,8 +48,8 @@ public class MatchSearchService {
 		dto.setMatchId(match.getId().toString());
 		dto.setStartTime(match.getStartTime());
 		dto.setEndTime(match.getEndTime());
-		dto.setTableId(match.getCompetitionTable().getId());
-		dto.setRoundId(match.getRound().getId());
+		dto.setTableId(match.getCompetitionTable() != null ? match.getCompetitionTable().getId() : null);
+		dto.setRoundId(match.getRound() != null ? match.getRound().getId() : null);
 
 		return dto;
 	}

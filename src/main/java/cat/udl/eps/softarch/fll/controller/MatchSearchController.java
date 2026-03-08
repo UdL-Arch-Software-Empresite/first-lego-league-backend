@@ -2,7 +2,6 @@ package cat.udl.eps.softarch.fll.controller;
 
 import java.time.LocalTime;
 import java.util.Map;
-
 import cat.udl.eps.softarch.fll.dto.MatchSearchItemResponse;
 import cat.udl.eps.softarch.fll.dto.MatchSearchPageResponse;
 import cat.udl.eps.softarch.fll.service.MatchSearchService;
@@ -24,7 +23,7 @@ public class MatchSearchController {
 	private final MatchSearchService matchSearchService;
 
 	@GetMapping("/search")
-	public ResponseEntity<?> searchMatches(
+	public ResponseEntity<Object> searchMatches(
 		@RequestParam(name = "startFrom", required = false)
 		@DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime startFrom,
 
@@ -49,7 +48,12 @@ public class MatchSearchController {
 
 		} catch (IllegalArgumentException ex) {
 			return ResponseEntity.unprocessableEntity()
-				.body(Map.of("error", ex.getMessage()));
+				.body(Map.of(
+					"errorCode", ex.getMessage(),
+					"message", "Start time must not be after end time",
+					"timestamp", java.time.Instant.now().toString(),
+					"path", "/matches/search"
+				));
 		}
 	}
 }

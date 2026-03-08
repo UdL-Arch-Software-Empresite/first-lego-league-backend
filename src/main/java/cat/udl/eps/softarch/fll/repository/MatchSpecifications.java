@@ -1,9 +1,7 @@
 package cat.udl.eps.softarch.fll.repository;
 
 import java.time.LocalTime;
-
 import org.springframework.data.jpa.domain.Specification;
-
 import cat.udl.eps.softarch.fll.domain.Match;
 
 public class MatchSpecifications {

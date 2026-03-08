@@ -3,7 +3,6 @@ package cat.udl.eps.softarch.fll.repository;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
-
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;

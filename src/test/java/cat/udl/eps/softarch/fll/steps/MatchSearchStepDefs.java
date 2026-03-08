@@ -35,7 +35,7 @@ public class MatchSearchStepDefs {
 		this.tableRepository = tableRepository;
 	}
 
-	@Before
+	@Before("@MatchSearch")
 	public void setup() {
 		matchRepository.deleteAll();
 		roundRepository.deleteAll();
@@ -48,10 +48,10 @@ public class MatchSearchStepDefs {
 
 		CompetitionTable table = new CompetitionTable();
 		table.setId("Table-01");
-		table = tableRepository.save(table); // Persistir primero
+		table = tableRepository.save(table);
 
 		Round round = new Round();
-		round = roundRepository.save(round); // Persistir primero
+		round = roundRepository.save(round);
 
 		Match match1 = new Match();
 		match1.setStartTime(LocalTime.of(10, 0));
@@ -122,9 +122,9 @@ public class MatchSearchStepDefs {
 		stepDefs.result.andExpect(jsonPath("$.items").isArray());
 	}
 
-	@Then("the error code should be \"INVALID_TIME_FILTER_RANGE\"MatchSearchStepDefs")
-	public void the_error_code_should_be_invalid_time_filter_range_match_search_step_defs() throws Exception {
-		stepDefs.result.andExpect(status().isUnprocessableEntity());
+	@Then("the error code should be \"INVALID_TIME_FILTER_RANGE\"")
+	public void theErrorCodeShouldBeInvalidTimeFilterRange() throws Exception {
+			stepDefs.result.andExpect(status().isUnprocessableEntity());
 		stepDefs.result.andExpect(jsonPath("$.error").value("INVALID_TIME_FILTER_RANGE"));
 	}
 }
