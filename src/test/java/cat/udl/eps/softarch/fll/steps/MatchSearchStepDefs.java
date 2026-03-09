@@ -4,8 +4,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
-
-import java.time.LocalDate;
 import java.time.LocalTime;
 import org.springframework.http.MediaType;
 import cat.udl.eps.softarch.fll.domain.CompetitionTable;
@@ -167,7 +165,7 @@ public class MatchSearchStepDefs {
 		table = tableRepository.save(table);
 
 		Round round = new Round();
-		round.setNumber(99);  // ← evita colisión con number=0 del Background
+		round.setNumber(99);
 		round = roundRepository.save(round);
 		currentRoundId = round.getId();
 
