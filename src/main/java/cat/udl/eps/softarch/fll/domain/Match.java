@@ -63,6 +63,7 @@ public class Match extends UriEntity<Long> {
 	private MatchState state = MatchState.SCHEDULED;
 
 	public Match() {
+		// Doesn't need to restrict values
 	}
 
 	@Override

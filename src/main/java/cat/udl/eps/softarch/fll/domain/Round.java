@@ -45,6 +45,7 @@ public class Round extends UriEntity<Long> {
 	private Edition edition;
 
 	public Round() {
+		// Doesn't need to restrict values
 	}
 
 	@Override
