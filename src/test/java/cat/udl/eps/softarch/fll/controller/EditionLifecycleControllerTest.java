@@ -56,7 +56,9 @@ class EditionLifecycleControllerTest {
 				.contentType(MediaType.APPLICATION_JSON)
 				.content("{\"state\":\"OPEN\"}"))
 				.andExpect(status().isConflict())
-				.andExpect(jsonPath("$.error").value("INVALID_EDITION_STATE_TRANSITION"));
+				.andExpect(jsonPath("$.error").value("INVALID_EDITION_STATE_TRANSITION"))
+				.andExpect(jsonPath("$.timestamp").isNotEmpty())
+				.andExpect(jsonPath("$.path").value("/editions/5/state"));
 	}
 
 	@Test
@@ -77,7 +79,9 @@ class EditionLifecycleControllerTest {
 				.contentType(MediaType.APPLICATION_JSON)
 				.content("{}"))
 				.andExpect(status().isBadRequest())
-				.andExpect(jsonPath("$.error").value("INVALID_EDITION_STATE_REQUEST"));
+				.andExpect(jsonPath("$.error").value("INVALID_EDITION_STATE_REQUEST"))
+				.andExpect(jsonPath("$.timestamp").isNotEmpty())
+				.andExpect(jsonPath("$.path").value("/editions/5/state"));
 	}
 
 	@Test

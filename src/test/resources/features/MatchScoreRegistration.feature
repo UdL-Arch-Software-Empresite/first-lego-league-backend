@@ -15,7 +15,7 @@ Feature: Register Match Score
     And I login as "score-user-2" with password "password"
     And There is a finished match ready for score registration
     When I register a final score of -1 for team A and 95 for team B
-    Then The response code is 400
+    Then The response code is 422
     And The error message is "Score cannot be negative"
 
   Scenario: Register score for non existing match
@@ -31,7 +31,7 @@ Feature: Register Match Score
     And I login as "score-user-5" with password "password"
     And There is an unfinished match ready for score registration
     When I register a final score of 120 for team A and 95 for team B
-    Then The response code is 400
+    Then The response code is 422
     And The error message is "Match must be finished before registering the result"
 
   Scenario: Register score for match with invalid time range
@@ -39,7 +39,7 @@ Feature: Register Match Score
     And I login as "score-user-6" with password "password"
     And There is a match with invalid time range ready for score registration
     When I register a final score of 120 for team A and 95 for team B
-    Then The response code is 400
+    Then The response code is 422
     And The error message is "Match end time cannot be before start time"
 
   Scenario: Register score when match result already exists
@@ -48,7 +48,7 @@ Feature: Register Match Score
     And There is a finished match ready for score registration
     And There is already a registered score for that match
     When I register a final score of 120 for team A and 95 for team B
-    Then The response code is 400
+    Then The response code is 409
     And The error message is "A result has already been registered for this match"
 
   Scenario: Register score with mismatched teams
@@ -56,7 +56,7 @@ Feature: Register Match Score
     And I login as "score-user-8" with password "password"
     And There is a finished match ready for score registration
     When I register a final score with mismatched teams
-    Then The response code is 400
+    Then The response code is 422
     And The error message is "Provided team IDs do not match the teams assigned to the match"
 
   Scenario: Register score using same team in both sides
@@ -64,7 +64,7 @@ Feature: Register Match Score
     And I login as "score-user-9" with password "password"
     And There is a finished match ready for score registration
     When I register a final score using the same team for both sides
-    Then The response code is 400
+    Then The response code is 422
     And The error message is "A match result requires two different teams"
 
   Scenario: Register score with null score payload
@@ -72,7 +72,7 @@ Feature: Register Match Score
     And I login as "score-user-10" with password "password"
     And There is a finished match ready for score registration
     When I register a final score with null score payload
-    Then The response code is 400
+    Then The response code is 422
     And The error message is "Invalid score payload"
 
   Scenario: Register score with invalid score format

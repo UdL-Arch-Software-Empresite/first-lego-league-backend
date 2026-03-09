@@ -50,6 +50,9 @@ class EditionVolunteerControllerTest {
 
 		mockMvc.perform(get("/editions/99/volunteers"))
 				.andExpect(status().isNotFound())
-				.andExpect(jsonPath("$.error").value("EDITION_NOT_FOUND"));
+				.andExpect(jsonPath("$.error").value("EDITION_NOT_FOUND"))
+				.andExpect(jsonPath("$.message").value("EDITION_NOT_FOUND"))
+				.andExpect(jsonPath("$.timestamp").isNotEmpty())
+				.andExpect(jsonPath("$.path").value("/editions/99/volunteers"));
 	}
 }
