@@ -1,6 +1,12 @@
 package cat.udl.eps.softarch.fll.controller;
 
+import java.util.Arrays;
+import java.util.Map;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -34,6 +40,28 @@ public class EditionLifecycleController {
 				transition.previousState(),
 				transition.newState(),
 				"UPDATED");
+	}
+
+	@ExceptionHandler(HttpMessageNotReadableException.class)
+	public ResponseEntity<Map<String, String>> handleUnreadablePayload(HttpMessageNotReadableException exception) {
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(
+				"error", "INVALID_EDITION_STATE_REQUEST",
+				"message", buildInvalidPayloadMessage(exception)));
+	}
+
+	private String buildInvalidPayloadMessage(HttpMessageNotReadableException exception) {
+		Throwable cause = exception.getMostSpecificCause();
+		String message = cause != null && cause.getMessage() != null ? cause.getMessage() : exception.getMessage();
+		if (message == null) {
+			return "Invalid request body";
+		}
+		if (message.contains("EditionState")) {
+			return "Invalid state value. Allowed values: " + Arrays.toString(EditionState.values());
+		}
+		if (message.contains("No content to map")) {
+			return "Request body is required";
+		}
+		return message;
 	}
 
 	public record ChangeEditionStateRequest(EditionState state) {

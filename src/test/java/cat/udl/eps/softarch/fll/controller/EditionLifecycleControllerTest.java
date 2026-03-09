@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import cat.udl.eps.softarch.fll.exception.DomainValidationExceptionHandler;
 import cat.udl.eps.softarch.fll.domain.EditionState;
 import cat.udl.eps.softarch.fll.exception.EditionLifecycleException;
 import cat.udl.eps.softarch.fll.handler.EditionLifecycleExceptionHandler;
@@ -25,7 +26,7 @@ class EditionLifecycleControllerTest {
 		editionLifecycleService = mock(EditionLifecycleService.class);
 		EditionLifecycleController controller = new EditionLifecycleController(editionLifecycleService);
 		mockMvc = MockMvcBuilders.standaloneSetup(controller)
-				.setControllerAdvice(new EditionLifecycleExceptionHandler())
+				.setControllerAdvice(new DomainValidationExceptionHandler(), new EditionLifecycleExceptionHandler())
 				.build();
 	}
 
@@ -85,6 +86,7 @@ class EditionLifecycleControllerTest {
 				.contentType(MediaType.APPLICATION_JSON)
 				.content("{\"state\":\"INVALID\"}"))
 				.andExpect(status().isBadRequest())
-				.andExpect(jsonPath("$.error").value("INVALID_EDITION_STATE_REQUEST"));
+				.andExpect(jsonPath("$.error").value("INVALID_EDITION_STATE_REQUEST"))
+				.andExpect(jsonPath("$.message").value("Invalid state value. Allowed values: [DRAFT, OPEN, CLOSED]"));
 	}
 }
