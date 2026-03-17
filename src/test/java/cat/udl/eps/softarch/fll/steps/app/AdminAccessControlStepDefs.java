@@ -2,7 +2,6 @@ package cat.udl.eps.softarch.fll.steps.app;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import cat.udl.eps.softarch.fll.steps.app.StepDefs;
 import org.springframework.http.MediaType;
 import io.cucumber.java.en.When;
 

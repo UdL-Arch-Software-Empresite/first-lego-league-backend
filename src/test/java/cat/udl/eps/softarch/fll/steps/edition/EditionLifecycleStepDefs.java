@@ -6,7 +6,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
-import cat.udl.eps.softarch.fll.steps.edition.ManageEditionStepDefs;
 import cat.udl.eps.softarch.fll.steps.app.AuthenticationStepDefs;
 import cat.udl.eps.softarch.fll.steps.app.StepDefs;
 import org.springframework.http.MediaType;
