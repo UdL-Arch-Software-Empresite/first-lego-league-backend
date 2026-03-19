@@ -46,34 +46,34 @@ public class EditionTeamRegistrationStepsDefs {
         }
     }
 
-    @Given("team {int} is registered in edition {long}")
-    @Given("team {int} is already registered in edition {long}")
-    public void teamIsAlreadyRegisteredInEdition(int teamId, Long editionId) throws Exception {
-        registerTeam(String.valueOf(teamId), editionId);
+    @Given("team {string} is registered in edition {int}")
+    @Given("team {string} is already registered in edition {int}")
+    public void teamIsRegisteredInEdition(String teamName, Integer editionId) throws Exception {
+        registerTeam(teamName, editionId.longValue());
     }
 
-    @When("I register team {int} in edition {long}")
-    @When("I register team {int} in edition {long} again")
-    public void iRegisterTeamInEdition(int teamId, Long editionId) throws Exception {
-        registerTeam(String.valueOf(teamId), editionId);
+    @When("I register team {string} in edition {int}")
+    @When("I register team {string} in edition {int} again")
+    public void iRegisterTeamInEdition(String teamName, Integer editionId) throws Exception {
+        registerTeam(teamName, editionId.longValue());
     }
 
-    private void registerTeam(String teamName, Long editionId) throws Exception {
-        stepDefs.result = stepDefs.mockMvc.perform(
-                post("/editions/" + editionId + "/teams/" + teamName)
-                    .with(AuthenticationStepDefs.authenticate())
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .accept(MediaType.APPLICATION_JSON));
-    }
+	private void registerTeam(String teamName, Long editionId) throws Exception {
+		stepDefs.result = stepDefs.mockMvc.perform(
+				post("/editions/" + editionId + "/teams/" + teamName)  
+					.with(AuthenticationStepDefs.authenticate())
+					.contentType(MediaType.APPLICATION_JSON)
+					.accept(MediaType.APPLICATION_JSON));
+	}
 
-    @When("I request the list of teams for edition {long}")
-    public void iRequestTheListOfTeamsForEdition(Long editionId) throws Exception {
-        stepDefs.result = stepDefs.mockMvc.perform(
-                get("/editions/" + editionId + "/teams")
-                    .with(AuthenticationStepDefs.authenticate())
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .accept(MediaType.APPLICATION_JSON));
-    }
+	@When("I request the list of teams for edition {long}")
+	public void iRequestTheListOfTeamsForEdition(Long editionId) throws Exception {
+		stepDefs.result = stepDefs.mockMvc.perform(
+				get("/editions/" + editionId + "/teams")  
+					.with(AuthenticationStepDefs.authenticate())
+					.contentType(MediaType.APPLICATION_JSON)
+					.accept(MediaType.APPLICATION_JSON));
+	}
 
     @Then("the response status should be {int} Created")
     public void theResponseStatusShouldBeCreated(int expectedStatus) throws Exception {
@@ -90,9 +90,8 @@ public class EditionTeamRegistrationStepsDefs {
         stepDefs.result.andExpect(status().isOk());
     }
 
-    @Then("the response should contain team {int}")
-    public void theResponseShouldContainTeam(int teamId) throws Exception {
-        String teamName = String.valueOf(teamId);
-        stepDefs.result.andExpect(jsonPath("$[?(@.id=='" + teamName + "')]").exists());
+    @Then("the response should contain team {string}")
+    public void theResponseShouldContainTeam(String teamName) throws Exception {
+        stepDefs.result.andExpect(jsonPath("$[?(@.name=='" + teamName + "')]").exists());
     }
 }

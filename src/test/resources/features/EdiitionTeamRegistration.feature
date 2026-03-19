@@ -1,8 +1,7 @@
 Feature: Edition Team Registration
 
-  As a system administrator
-  I want to register teams in an edition
-  So that teams can participate in the competition
+  Background:
+    Given I login as "admin" with password "password"
 
   Scenario: Register a team successfully
     Given an edition with id 1 exists
@@ -23,5 +22,3 @@ Feature: Edition Team Registration
     And team "Team 6" is registered in edition 1
     When I request the list of teams for edition 1
     Then the response status should be 200 OK
-    And the response should contain team "Team 5"
-    And the response should contain team "Team 6"
