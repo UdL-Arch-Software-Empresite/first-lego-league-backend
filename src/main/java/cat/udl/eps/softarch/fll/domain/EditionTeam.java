@@ -1,26 +1,25 @@
 package cat.udl.eps.softarch.fll.domain;
 
 import java.time.LocalDate;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.JoinColumn;
+import jakarta.persistence.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
+@Data
+@NoArgsConstructor
 public class EditionTeam {
     @Id
-    private Long editionId;
-    
-    @Id
-    private Long teamId;
-    
-    private LocalDate registrationDate = LocalDate.now();
-    
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id; 
+
     @ManyToOne
-    @JoinColumn(name = "edition_id", insertable = false, updatable = false)
+    @JoinColumn(name = "edition_id")
     private Edition edition;
-    
+
     @ManyToOne
-    @JoinColumn(name = "team_id", insertable = false, updatable = false)
+    @JoinColumn(name = "team_name") 
     private Team team;
+
+    private LocalDate registrationDate = LocalDate.now();
 }

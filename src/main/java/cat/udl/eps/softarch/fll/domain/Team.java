@@ -62,14 +62,11 @@ public class Team extends UriEntity<String> {
 	@Size(max = 10, message = "A team cannot have more than 10 members")
 	@ToString.Exclude
 	private List<TeamMember> members = new ArrayList<>();
-	@ManyToMany
-	@JoinTable(
-		name = "team_edition",
-		joinColumns = @JoinColumn(name = "team_name", referencedColumnName = "name"),
-		inverseJoinColumns = @JoinColumn(name = "edition_id"))
-	@JsonIdentityReference(alwaysAsId = true)
-	@ToString.Exclude
-	private Set<Edition> registeredEditions = new HashSet<>();
+
+	@OneToMany(mappedBy = "team", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ToString.Exclude
+    private Set<EditionTeam> registeredEditions = new HashSet<>();
+	
 	@ManyToMany
 	@JoinTable(
 		name = "team_coach",
@@ -142,10 +139,13 @@ public class Team extends UriEntity<String> {
 	}
 
 	public void registerEdition(Edition edition) {
-		if (edition != null) {
-			registeredEditions.add(edition);
-		}
-	}
+        if (edition != null) {
+            EditionTeam registration = new EditionTeam();
+            registration.setEdition(edition);
+            registration.setTeam(this);
+            this.registeredEditions.add(registration);
+        }
+    }
 
 	public void addCoach(Coach coach) {
 		if (coach == null) {

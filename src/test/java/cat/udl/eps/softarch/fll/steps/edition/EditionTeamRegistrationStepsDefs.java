@@ -37,22 +37,25 @@ public class EditionTeamRegistrationStepsDefs {
         }
     }
 
-    @Given("a team with name {string} exists")
-    public void aTeamWithNameExists(String teamName) {
+    @Given("a team with id {int} exists")
+    public void aTeamWithIdExists(int teamId) {
+        String teamName = String.valueOf(teamId); // Convertimos el 5 en "5"
         if (!teamRepository.findById(teamName).isPresent()) {
             Team team = Team.create(teamName, "Test City", 2020, "Test Category");
             teamRepository.save(team);
         }
     }
 
-    @Given("team {string} is already registered in edition {long}")
-    public void teamIsAlreadyRegisteredInEdition(String teamName, Long editionId) throws Exception {
-        registerTeam(teamName, editionId);
+    @Given("team {int} is registered in edition {long}")
+    @Given("team {int} is already registered in edition {long}")
+    public void teamIsAlreadyRegisteredInEdition(int teamId, Long editionId) throws Exception {
+        registerTeam(String.valueOf(teamId), editionId);
     }
 
-    @When("I register team {string} in edition {long}")
-    public void iRegisterTeamInEdition(String teamName, Long editionId) throws Exception {
-        registerTeam(teamName, editionId);
+    @When("I register team {int} in edition {long}")
+    @When("I register team {int} in edition {long} again")
+    public void iRegisterTeamInEdition(int teamId, Long editionId) throws Exception {
+        registerTeam(String.valueOf(teamId), editionId);
     }
 
     private void registerTeam(String teamName, Long editionId) throws Exception {
@@ -87,8 +90,9 @@ public class EditionTeamRegistrationStepsDefs {
         stepDefs.result.andExpect(status().isOk());
     }
 
-    @Then("the response should contain team {string}")
-    public void theResponseShouldContainTeam(String teamName) throws Exception {
+    @Then("the response should contain team {int}")
+    public void theResponseShouldContainTeam(int teamId) throws Exception {
+        String teamName = String.valueOf(teamId);
         stepDefs.result.andExpect(jsonPath("$[?(@.id=='" + teamName + "')]").exists());
     }
-} 
+}
