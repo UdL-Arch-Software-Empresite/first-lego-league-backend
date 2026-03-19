@@ -1,5 +1,7 @@
 package cat.udl.eps.softarch.fll.service;
 
+import java.util.List;
+import java.util.ArrayList;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import cat.udl.eps.softarch.fll.domain.Edition;
@@ -54,5 +56,15 @@ public class EditionTeamRegistrationService {
 
 		edition.getTeams().add(team);
 		return editionRepository.save(edition);
+	}
+
+	@Transactional(readOnly = true)
+	public List<Team> getTeamsByEdition(Long editionId) {
+		Edition edition = editionRepository.findById(editionId)
+			.orElseThrow(() -> new EditionTeamRegistrationException(
+				"EDITION_NOT_FOUND", 
+				"Edition with id " + editionId + " not found"));
+		
+		return new ArrayList<>(edition.getTeams());
 	}
 }
